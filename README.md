@@ -1,1 +1,3 @@
-Tic-Tac-Toe_with_AI
+# My take on Tic-Tac-Toe with AI
+## from JetBrains Academy - Hyperskill
+\m/
