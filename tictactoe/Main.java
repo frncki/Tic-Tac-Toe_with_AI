@@ -35,14 +35,61 @@ public class Main {
                     }
                     if (checker == 9) System.out.println("Valid input!");
                 }
-                System.out.println("---------\n" +
-                        "| " + inCh[0] + " " + inCh[1] + " " + inCh[2] + " " + "|\n" +
-                        "| " + inCh[3] + " " + inCh[4] + " " + inCh[5] + " " + "|\n" +
-                        "| " + inCh[6] + " " + inCh[7] + " " + inCh[8] + " " + "|\n" +
-                        "---------");
+                drawBoard(inCh);
+                System.out.println(checkBoard(inCh));
             } catch (Exception ex) {
                 System.out.println(ex);
             }
         }
     }
+
+    private static void drawBoard(char[] chars) {
+        System.out.println("---------\n" +
+                "| " + chars[0] + " " + chars[1] + " " + chars[2] + " " + "|\n" +
+                "| " + chars[3] + " " + chars[4] + " " + chars[5] + " " + "|\n" +
+                "| " + chars[6] + " " + chars[7] + " " + chars[8] + " " + "|\n" +
+                "---------");
+    }
+
+    private static String checkBoard(char[] chars) {
+
+        int oNum = 0, xNum = 0;
+        
+        for (char ch : chars) {
+            if (ch == 'O') oNum++;
+            if (ch == 'X') xNum++;
+        }
+
+        int oxDiff = Math.abs(oNum - xNum);
+
+        if (oxDiff > 1) return "Impossible";
+
+        for (int i = 0; i < 3; i++) {
+            if (checkPlayer(i, chars, 'O')) { //checks O player
+                for (int j = 0; j < 3; j++) {
+                    if (checkPlayer(j, chars, 'X')) return "Impossible"; //checks if there is any X win at the same time
+                }
+                return "O wins";
+            } else if (checkPlayer(i, chars, 'X')) { //checks X player
+                for (int j = 0; j < 3; j++) {
+                    if (checkPlayer(j, chars, 'O')) return "Impossible"; //checks if there is any O win at the same time
+                }
+                return "X wins";
+            }
+        }
+
+        for (char ch : chars) {
+            if (ch == ' ') return "Game not finished";
+        }
+
+        return "Draw";
+    }
+
+    private static boolean checkPlayer(int i, char[] chars, char player) {
+        return (chars[i] == chars[i + 3] && chars[i + 3] == chars[i + 6] && chars[i] == player) || // vertical
+                (chars[i * 3] == chars[i * 3 + 1] && chars[i * 3 + 1] == chars[i * 3 + 2] && chars[i * 3] == player) || // horizontal
+                (chars[0] == chars[4] && chars[4] == chars[8] && chars[0] == player) || // diagonal
+                (chars[2] == chars[4] && chars[4] == chars[6] && chars[2] == player);   // counter diagonal;
+    }
+
 }
