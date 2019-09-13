@@ -1,5 +1,6 @@
 package tictactoe;
 
+import javax.sound.midi.SysexMessage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,24 +8,26 @@ import java.io.InputStreamReader;
 public class Main {
     public static void main(String[] args) throws IOException {
 
+        char[] inCh = new char[9]; //inCh = inputCharacters
+        boolean[] board = new boolean[9];
+        int x = -10, y = -10;
+
         //Enter data
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         System.out.print("Enter cells: ");
         // Reading data using readLine
-        String input = reader.readLine().replace("\"", "");
+        String inputCells = reader.readLine().replace("\"", "");
 
-        System.out.println(input);
+        System.out.println(inputCells);
 
-        if (input.length() != 9) {
-            System.out.println("Error! Wrong input length.");
+        if (inputCells.length() != 9) {
+            System.err.println("Error! Wrong input length.");
             System.exit(0);
         } else {
 
-            char[] inCh = new char[9];
-
             try {
-                input.getChars(0, 9, inCh, 0);
+                inputCells.getChars(0, 9, inCh, 0);
                 int checker = 0;
                 for (char ch : inCh) {
                     if (ch == 'X' || ch == 'O' || ch == ' ') {
@@ -35,12 +38,88 @@ public class Main {
                     }
                     if (checker == 9) System.out.println("Valid input!");
                 }
-                drawBoard(inCh);
-                System.out.println(checkBoard(inCh));
             } catch (Exception ex) {
-                System.out.println(ex);
+                System.err.println(ex);
             }
         }
+
+
+        for (int i = 0; i < inCh.length; i++) {
+            if (inCh[i] == 'X' || inCh[i] == 'O') {
+                board[i] = true;
+            } else {
+                board[i] = false;
+            }
+        }
+        drawBoard(inCh);
+        //System.out.println(checkBoard(inCh));
+
+        System.out.print("Enter the coordinates: ");
+        // Reading data using readLine
+        String inputCoords = reader.readLine();
+        char[] inCords = new char[3];
+
+        if (inputCoords.length() != 3) {
+            System.err.println("Error! Wrong input length.");
+            System.exit(2);
+        } else {
+
+            try {
+                inputCoords.getChars(0, 3, inCords, 0);
+
+                int checker = 0;
+                for (char ch : inCords) {
+                    if (ch != ' ') {
+                        checker++;
+                    }
+                }
+                if (checker > 2) {
+                    System.err.println("Error! Wrong input.");
+                    System.exit(2);
+                }
+
+                x = Character.getNumericValue(inCords[0]);
+                y = Character.getNumericValue(inCords[2]);
+
+                if (x < 1 || x > 3) {
+                    System.err.println("Error! Wrong X input.");
+                    System.exit(2);
+                }
+
+                if (y < 1 || y > 3) {
+                    System.err.println("Error! Wrong Y input.");
+                    System.exit(2);
+                }
+            } catch (Exception ex) {
+                System.err.println(ex);
+            }
+        }
+
+        System.out.println(x + " " + y);
+
+        //inCh = addMove(inCh, board, x, y, 'X');
+        drawBoard(addMove(inCh, board, x, y, 'X'));
+
+    }
+
+
+    private static char[] addMove(char[] chars, boolean[] board, int _x, int _y, char player) { //index formula = x + y * width
+        int index = 0;
+
+        if (_y == 1) index = _x + _y + 4; // to jest najwieksze bzdursko
+        if (_y == 2) index = _x + _y;     // wiem ;/
+        if (_y == 3) index = _x + _y - 4; // ale dziala! xd
+
+
+        System.out.println(index);
+
+        if (!board[index]) {
+            chars[index] = player;
+            board[index] = true;
+        } else {
+            System.err.println("This cell is occupied! Choose another one!");
+        }
+        return chars;
     }
 
     private static void drawBoard(char[] chars) {
@@ -54,7 +133,7 @@ public class Main {
     private static String checkBoard(char[] chars) {
 
         int oNum = 0, xNum = 0;
-        
+
         for (char ch : chars) {
             if (ch == 'O') oNum++;
             if (ch == 'X') xNum++;
