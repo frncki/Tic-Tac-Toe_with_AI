@@ -1,6 +1,5 @@
 package tictactoe;
 
-import javax.sound.midi.SysexMessage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,125 +7,92 @@ import java.io.InputStreamReader;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        char[] inCh = new char[9]; //inCh = inputCharacters
-        boolean[] board = new boolean[9];
-        int x = -10, y = -10;
-
-        //Enter data
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        System.out.print("Enter cells: ");
-        // Reading data using readLine
-        String inputCells = reader.readLine().replace("\"", "");
-
-        System.out.println(inputCells);
-
-        if (inputCells.length() != 9) {
-            System.err.println("Error! Wrong input length.");
-            System.exit(0);
-        } else {
-
-            try {
-                inputCells.getChars(0, 9, inCh, 0);
-                int checker = 0;
-                for (char ch : inCh) {
-                    if (ch == 'X' || ch == 'O' || ch == ' ') {
-                        checker++;
-                    } else {
-                        System.out.println("Error! Wrong characters.");
-                        System.exit(1);
-                    }
-                    if (checker == 9) System.out.println("Valid input!");
-                }
-            } catch (Exception ex) {
-                System.err.println(ex);
-            }
-        }
+        char[] inCh = new char[9]; //inCh = inputCharacters
+        boolean[] board = new boolean[9];
 
 
-        for (int i = 0; i < inCh.length; i++) {
+        inCh = enterBoardState(reader, inCh);
+
+        for (int i = 0; i < inCh.length; i++) { // initialize board array
             if (inCh[i] == 'X' || inCh[i] == 'O') {
                 board[i] = true;
             } else {
                 board[i] = false;
             }
         }
+
         drawBoard(inCh);
+
         //System.out.println(checkBoard(inCh));
 
-        System.out.print("Enter the coordinates: ");
-        // Reading data using readLine
-        String inputCoords = reader.readLine();
-        char[] inCords = new char[3];
-
-        if (inputCoords.length() != 3) {
-            System.err.println("Error! Wrong input length.");
-            System.exit(2);
-        } else {
-
-            try {
-                inputCoords.getChars(0, 3, inCords, 0);
-
-                int checker = 0;
-                for (char ch : inCords) {
-                    if (ch != ' ') {
-                        checker++;
-                    }
-                }
-                if (checker > 2) {
-                    System.err.println("Error! Wrong input.");
-                    System.exit(2);
-                }
-
-                x = Character.getNumericValue(inCords[0]);
-                y = Character.getNumericValue(inCords[2]);
-
-                if (x < 1 || x > 3) {
-                    System.err.println("Error! Wrong X input.");
-                    System.exit(2);
-                }
-
-                if (y < 1 || y > 3) {
-                    System.err.println("Error! Wrong Y input.");
-                    System.exit(2);
-                }
-            } catch (Exception ex) {
-                System.err.println(ex);
-            }
-        }
-
-        System.out.println(x + " " + y);
-
-        //inCh = addMove(inCh, board, x, y, 'X');
-        drawBoard(addMove(inCh, board, x, y, 'X'));
+        drawBoard(addMove(reader, inCh, board, 'X'));
 
     }
 
 
-    private static char[] addMove(char[] chars, boolean[] board, int _x, int _y, char player) { //index formula = x + y * width
-        int index = 0;
+    private static char[] addMove(BufferedReader reader, char[] chars, boolean[] board, char player) throws IOException { //index formula = x + y * width
+        boolean valid = false;
+        int x = -10, y = -10;
 
-        if (_y == 1) index = _x + _y + 4; // to jest najwieksze bzdursko
-        if (_y == 2) index = _x + _y;     // wiem ;/
-        if (_y == 3) index = _x + _y - 4; // ale dziala! xd
+        while (!valid) {
+            System.out.print("Enter the coordinates: ");
+            // Reading data using readLine
+            String inputCoords = reader.readLine();
+            char[] inCords = new char[3];
 
+            if (inputCoords.length() != 3) {
+                System.err.println("Error! Wrong input length.");
+                valid = false;
+            } else {
 
-        System.out.println(index);
+                try {
+                    inputCoords.getChars(0, 3, inCords, 0);
 
-        if (!board[index]) {
-            chars[index] = player;
-            board[index] = true;
-        } else {
-            System.err.println("This cell is occupied! Choose another one!");
+                    int checker = 0;
+                    for (char ch : inCords) {
+                        if (ch != ' ') {
+                            checker++;
+                        }
+                    }
+                    if (checker > 2) {
+                        System.err.println("Error! Wrong input.");
+                        valid = false;
+                    }
+
+                    x = Character.getNumericValue(inCords[0]);
+                    y = Character.getNumericValue(inCords[2]);
+
+                    if (x < 1 || x > 3 || y < 1 || y > 3) {
+                        System.err.println("Coordinates should be from 1 to 3!");
+                        valid = false;
+                    }
+
+                    int index = x + y * 3 - 4;
+
+                    if (!board[index]) {
+                        board[index] = true;
+                        chars[index] = player;
+                        valid = true;
+                    } else {
+                        System.err.println("This cell is occupied! Choose another one!");
+                        valid = false;
+                    }
+                } catch (Exception ex) {
+                    System.err.println("You should enter numbers!\n" + ex);
+                }
+            }
         }
+
         return chars;
     }
 
     private static void drawBoard(char[] chars) {
         System.out.println("---------\n" +
-                "| " + chars[0] + " " + chars[1] + " " + chars[2] + " " + "|\n" +
-                "| " + chars[3] + " " + chars[4] + " " + chars[5] + " " + "|\n" +
                 "| " + chars[6] + " " + chars[7] + " " + chars[8] + " " + "|\n" +
+                "| " + chars[3] + " " + chars[4] + " " + chars[5] + " " + "|\n" +
+                "| " + chars[0] + " " + chars[1] + " " + chars[2] + " " + "|\n" +
                 "---------");
     }
 
@@ -171,4 +137,44 @@ public class Main {
                 (chars[2] == chars[4] && chars[4] == chars[6] && chars[2] == player);   // counter diagonal;
     }
 
+    private static char[] enterBoardState(BufferedReader reader, char[] chars) throws IOException {
+
+        System.out.print("Enter cells: ");
+        // Reading data using readLine
+        String inputCells = reader.readLine().replace("\"", "");
+
+        System.out.println(inputCells);
+
+        if (inputCells.length() != 9) {
+            System.err.println("Error! Wrong input length.");
+            System.exit(0);
+        } else {
+
+            try {
+                inputCells.getChars(0, 9, chars, 0);
+                int checker = 0;
+                for (char ch : chars) {
+                    if (ch == 'X' || ch == 'O' || ch == ' ') {
+                        checker++;
+                    } else {
+                        System.out.println("Error! Wrong characters.");
+                        System.exit(1);
+                    }
+                    if (checker == 9) System.out.println("Valid input!");
+                }
+            } catch (Exception ex) {
+                System.err.println(ex);
+            }
+        }
+
+        char[] temp = new char[3];
+
+        for (int i = 0; i < 3; i++) {
+            temp[i] = chars[i];
+            chars[i] = chars[i + 6];
+            chars[i + 6] = temp[i];
+        }
+
+        return chars;
+    }
 }
