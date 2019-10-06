@@ -82,15 +82,7 @@ public class Main {
 
     private static char[] addBotMove(BufferedReader reader, Bot bot, char[] chars, boolean[] board, char character) throws IOException {
 
-        System.out.print("Making move level ");
-        String difficulty = reader.readLine().replace("\"", "");
-        if(difficulty.equals("medium")) {
-            chars[bot.medium(board)] = character;
-        } else if(difficulty.equals("hard")) {
-            chars[bot.hard(board)] = character;
-        } else {
-            chars[bot.easy(board)] = character;
-        }
+        chars[bot.easy(board)] = character;
 
         return chars;
     }

@@ -16,6 +16,7 @@ public class Bot {
     }
 
     public int easy(boolean[] board) {
+        System.out.println("Making move level \"easy\"");
 
         boolean valid;
 
