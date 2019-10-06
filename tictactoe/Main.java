@@ -9,32 +9,21 @@ public class Main {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        char[] inCh = new char[9]; //inCh = inputCharacters
-        boolean[] board = new boolean[9];
-
-
-        inCh = enterBoardState(reader, inCh);
-
-        for (int i = 0; i < inCh.length; i++) { // initialize board array
-            if (inCh[i] == 'X' || inCh[i] == 'O') {
-                board[i] = true;
-            } else {
-                board[i] = false;
-            }
-        }
+        char[] inCh = enterBoardState(reader); //inCh = inputCharacters
+        boolean[] board = initializeBoardArray(inCh);
+        Bot bot = new Bot();
+        //int[] botMove = new int[2];
 
         drawBoard(inCh);
 
-        //System.out.println(checkBoard(inCh));
-
-        drawBoard(addMove(reader, inCh, board, 'X'));
+        drawBoard(addBotMove(reader, bot, inCh, board, 'X'));
 
     }
 
 
-    private static char[] addMove(BufferedReader reader, char[] chars, boolean[] board, char player) throws IOException { //index formula = x + y * width
+    private static char[] addPlayerMove(BufferedReader reader, char[] chars, boolean[] board, char player) throws IOException { //index formula = x + y * width
         boolean valid = false;
-        int x = -10, y = -10;
+        int x, y;
 
         while (!valid) {
             System.out.print("Enter the coordinates: ");
@@ -67,22 +56,40 @@ public class Main {
                     if (x < 1 || x > 3 || y < 1 || y > 3) {
                         System.err.println("Coordinates should be from 1 to 3!");
                         valid = false;
-                    }
-
-                    int index = x + y * 3 - 4;
-
-                    if (!board[index]) {
-                        board[index] = true;
-                        chars[index] = player;
-                        valid = true;
                     } else {
-                        System.err.println("This cell is occupied! Choose another one!");
-                        valid = false;
+
+                        int index = x + y * 3 - 4;
+
+                        if (!board[index]) {
+                            board[index] = true;
+                            chars[index] = player;
+                            valid = true;
+                        } else {
+                            System.err.println("This cell is occupied! Choose another one!");
+                            valid = false;
+                        }
                     }
+
                 } catch (Exception ex) {
-                    System.err.println("You should enter numbers!\n" + ex);
+                    System.err.println("\nYou should enter numbers!\n" + ex);
+                    System.exit(0);
                 }
             }
+        }
+
+        return chars;
+    }
+
+    private static char[] addBotMove(BufferedReader reader, Bot bot, char[] chars, boolean[] board, char character) throws IOException {
+
+        System.out.print("Making move level ");
+        String difficulty = reader.readLine().replace("\"", "");
+        if(difficulty.equals("medium")) {
+            chars[bot.medium(board)] = character;
+        } else if(difficulty.equals("hard")) {
+            chars[bot.hard(board)] = character;
+        } else {
+            chars[bot.easy(board)] = character;
         }
 
         return chars;
@@ -137,7 +144,9 @@ public class Main {
                 (chars[2] == chars[4] && chars[4] == chars[6] && chars[2] == player);   // counter diagonal;
     }
 
-    private static char[] enterBoardState(BufferedReader reader, char[] chars) throws IOException {
+    private static char[] enterBoardState(BufferedReader reader) throws IOException {
+
+        char[] chars = new char[9];
 
         System.out.print("Enter cells: ");
         // Reading data using readLine
@@ -169,12 +178,25 @@ public class Main {
 
         char[] temp = new char[3];
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) { // rearranges the characters so it matches input method
             temp[i] = chars[i];
             chars[i] = chars[i + 6];
             chars[i + 6] = temp[i];
         }
 
         return chars;
+    }
+
+    private static boolean[] initializeBoardArray(char[] chars) {
+        boolean[] board = new boolean[9];
+
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == 'X' || chars[i] == 'O') {
+                board[i] = true;
+            } else {
+                board[i] = false;
+            }
+        }
+        return board;
     }
 }
