@@ -18,11 +18,11 @@ public class Main {
 
         boolean menu = true;
 
-        while(menu) {
+        while (menu) {
             System.out.print("Input command: ");
             String command = scanner.nextLine();
 
-            switch(command) {
+            switch (command) {
                 case "start user easy":
                 case "start user medium":
                 case "start user hard":
@@ -48,7 +48,7 @@ public class Main {
                     break;
 
                 default:
-                    System.out.println("Bad parameters!");
+                    System.err.println("Bad parameters!");
             }
         }
     }
@@ -70,13 +70,44 @@ public class Main {
         while (game) { // game loop
             switch (checkBoard(inCh)) {
                 case "Game not finished":
-                    if(!firstPlayerMoved) {
-                        drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
-                        firstPlayerMoved = true;
-                    } else{
-                        drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
-                        firstPlayerMoved = false;
+                    if (firstPlayer == PlayerType.USER && secondPlayer == PlayerType.USER) { // this is fkn spaghetti! ;o
+                        //user user
+                        if (!firstPlayerMoved) {
+                            drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
+                            firstPlayerMoved = true;
+                        } else {
+                            drawBoard(addPlayerMove(scanner, inCh, board, secondPlayerCharacter));
+                            firstPlayerMoved = false;
+                        }
+                    } else if (firstPlayer == PlayerType.USER && (secondPlayer == PlayerType.BOT_EASY || secondPlayer == PlayerType.BOT_MEDIUM || secondPlayer == PlayerType.BOT_HARD)) {
+                        //user bot
+                        if (!firstPlayerMoved) {
+                            drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
+                            firstPlayerMoved = true;
+                        } else {
+                            drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
+                            firstPlayerMoved = false;
+                        }
+                    } else if (secondPlayer == PlayerType.USER && (firstPlayer == PlayerType.BOT_EASY || firstPlayer == PlayerType.BOT_MEDIUM || firstPlayer == PlayerType.BOT_HARD)) {
+                        //bot user
+                        if (!firstPlayerMoved) {
+                            drawBoard(addBotMove(new Bot(firstPlayer), inCh, board, firstPlayerCharacter));
+                            firstPlayerMoved = true;
+                        } else {
+                            drawBoard(addPlayerMove(scanner, inCh, board, secondPlayerCharacter));
+                            firstPlayerMoved = false;
+                        }
+                    } else if ((firstPlayer == PlayerType.BOT_EASY || firstPlayer == PlayerType.BOT_MEDIUM || firstPlayer == PlayerType.BOT_HARD) && (secondPlayer == PlayerType.BOT_EASY || secondPlayer == PlayerType.BOT_MEDIUM || secondPlayer == PlayerType.BOT_HARD)) {
+                        //bot bot
+                        if (!firstPlayerMoved) {
+                            drawBoard(addBotMove(new Bot(firstPlayer), inCh, board, firstPlayerCharacter));
+                            firstPlayerMoved = true;
+                        } else {
+                            drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
+                            firstPlayerMoved = false;
+                        }
                     }
+                    //gameMove(scanner, inCh, board, firstPlayer, secondPlayer, firstPlayerMoved);
                     break;
 
                 case "O wins":
@@ -104,69 +135,45 @@ public class Main {
         }
     }
 
-    private static void gameMove(Scanner scanner, char[] inCh, boolean[] board, PlayerType firstPlayer, PlayerType secondPlayer) throws IOException {
-        boolean firstPlayerMoved = false;
+    private static void gameMove(Scanner scanner, char[] inCh, boolean[] board, PlayerType firstPlayer, PlayerType secondPlayer, boolean firstPlayerMoved) throws IOException {
         char firstPlayerCharacter = 'X', secondPlayerCharacter = 'O';
-
-        switch(firstPlayer) {
-            case USER:
-                switch(secondPlayer) {
-                    case USER:
-                        if(!firstPlayerMoved) {
-                            drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
-                            firstPlayerMoved = true;
-                        } else{
-                            drawBoard(addPlayerMove(scanner, inCh, board, secondPlayerCharacter));
-                            firstPlayerMoved = false;
-                        }
-                        break;
-
-                    case BOT_EASY:
-                    case BOT_MEDIUM:
-                    case BOT_HARD:
-                        if(!firstPlayerMoved) {
-                            drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
-                            firstPlayerMoved = true;
-                        } else{
-                            drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
-                            firstPlayerMoved = false;
-                        }
-                        break;
-                }
-                break;
-
-            case BOT_EASY:
-            case BOT_MEDIUM:
-            case BOT_HARD:
-                switch(secondPlayer) {
-                    case USER:
-                        if(!firstPlayerMoved) {
-                            drawBoard(addBotMove(new Bot(firstPlayer), inCh, board, firstPlayerCharacter));
-                            firstPlayerMoved = true;
-                        } else{
-                            drawBoard(addPlayerMove(scanner, inCh, board, secondPlayerCharacter));
-                            firstPlayerMoved = false;
-                        }
-                        break;
-
-                    case BOT_EASY:
-                    case BOT_MEDIUM:
-                    case BOT_HARD:
-                        if(!firstPlayerMoved) {
-                            drawBoard(addBotMove(new Bot(firstPlayer), inCh, board, firstPlayerCharacter));
-                            firstPlayerMoved = true;
-                        } else{
-                            drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
-                            firstPlayerMoved = false;
-                        }
-                        break;
-                }
-                break;
-
+        if (firstPlayer == PlayerType.USER && secondPlayer == PlayerType.USER) {
+            //user user
+            if (!firstPlayerMoved) {
+                drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
+                firstPlayerMoved = true;
+            } else {
+                drawBoard(addPlayerMove(scanner, inCh, board, secondPlayerCharacter));
+                firstPlayerMoved = false;
+            }
+        } else if (firstPlayer == PlayerType.USER && (secondPlayer == PlayerType.BOT_EASY || secondPlayer == PlayerType.BOT_MEDIUM || secondPlayer == PlayerType.BOT_HARD)) {
+            //user bot
+            if (!firstPlayerMoved) {
+                drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
+                firstPlayerMoved = true;
+            } else {
+                drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
+                firstPlayerMoved = false;
+            }
+        } else if (secondPlayer == PlayerType.USER && (firstPlayer == PlayerType.BOT_EASY || firstPlayer == PlayerType.BOT_MEDIUM || firstPlayer == PlayerType.BOT_HARD)) {
+            //bot user
+            if (!firstPlayerMoved) {
+                drawBoard(addBotMove(new Bot(firstPlayer), inCh, board, firstPlayerCharacter));
+                firstPlayerMoved = true;
+            } else {
+                drawBoard(addPlayerMove(scanner, inCh, board, secondPlayerCharacter));
+                firstPlayerMoved = false;
+            }
+        } else if ((firstPlayer == PlayerType.BOT_EASY || firstPlayer == PlayerType.BOT_MEDIUM || firstPlayer == PlayerType.BOT_HARD) && (secondPlayer == PlayerType.BOT_EASY || secondPlayer == PlayerType.BOT_MEDIUM || secondPlayer == PlayerType.BOT_HARD)) {
+            //bot bot
+            if (!firstPlayerMoved) {
+                drawBoard(addBotMove(new Bot(firstPlayer), inCh, board, firstPlayerCharacter));
+                firstPlayerMoved = true;
+            } else {
+                drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
+                firstPlayerMoved = false;
+            }
         }
-
-
-
     }
 
     private static char[] enterBoardState(Scanner scanner) throws IOException {
