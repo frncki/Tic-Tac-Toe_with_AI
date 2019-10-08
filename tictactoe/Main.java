@@ -69,9 +69,8 @@ public class Main {
 
         while (game) { // game loop
             switch (checkBoard(inCh)) {
-                case "Game not finished":
-                    if (firstPlayer == PlayerType.USER && secondPlayer == PlayerType.USER) { // this is fkn spaghetti! ;o
-                        //user user
+                case "Game not finished":  // this is fkn spaghetti! ;o
+                    if (firstPlayer == PlayerType.USER && secondPlayer == PlayerType.USER) { //user user
                         if (!firstPlayerMoved) {
                             drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
                             firstPlayerMoved = true;
@@ -79,8 +78,7 @@ public class Main {
                             drawBoard(addPlayerMove(scanner, inCh, board, secondPlayerCharacter));
                             firstPlayerMoved = false;
                         }
-                    } else if (firstPlayer == PlayerType.USER && (secondPlayer == PlayerType.BOT_EASY || secondPlayer == PlayerType.BOT_MEDIUM || secondPlayer == PlayerType.BOT_HARD)) {
-                        //user bot
+                    } else if (firstPlayer == PlayerType.USER && checkBotDifficulty(secondPlayer)) { //user bot
                         if (!firstPlayerMoved) {
                             drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
                             firstPlayerMoved = true;
@@ -88,8 +86,7 @@ public class Main {
                             drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
                             firstPlayerMoved = false;
                         }
-                    } else if (secondPlayer == PlayerType.USER && (firstPlayer == PlayerType.BOT_EASY || firstPlayer == PlayerType.BOT_MEDIUM || firstPlayer == PlayerType.BOT_HARD)) {
-                        //bot user
+                    } else if (checkBotDifficulty(firstPlayer) && secondPlayer == PlayerType.USER) {  //bot user
                         if (!firstPlayerMoved) {
                             drawBoard(addBotMove(new Bot(firstPlayer), inCh, board, firstPlayerCharacter));
                             firstPlayerMoved = true;
@@ -97,8 +94,7 @@ public class Main {
                             drawBoard(addPlayerMove(scanner, inCh, board, secondPlayerCharacter));
                             firstPlayerMoved = false;
                         }
-                    } else if ((firstPlayer == PlayerType.BOT_EASY || firstPlayer == PlayerType.BOT_MEDIUM || firstPlayer == PlayerType.BOT_HARD) && (secondPlayer == PlayerType.BOT_EASY || secondPlayer == PlayerType.BOT_MEDIUM || secondPlayer == PlayerType.BOT_HARD)) {
-                        //bot bot
+                    } else if (checkBotDifficulty(firstPlayer) && checkBotDifficulty(secondPlayer)) { //bot bot
                         if (!firstPlayerMoved) {
                             drawBoard(addBotMove(new Bot(firstPlayer), inCh, board, firstPlayerCharacter));
                             firstPlayerMoved = true;
@@ -135,7 +131,13 @@ public class Main {
         }
     }
 
+    private static boolean checkBotDifficulty(PlayerType diff) {
+        if (diff == PlayerType.BOT_EASY || diff == PlayerType.BOT_MEDIUM || diff == PlayerType.BOT_HARD) return true;
+        return false;
+    }
+
     private static void gameMove(Scanner scanner, char[] inCh, boolean[] board, PlayerType firstPlayer, PlayerType secondPlayer, boolean firstPlayerMoved) throws IOException {
+        /*
         char firstPlayerCharacter = 'X', secondPlayerCharacter = 'O';
         if (firstPlayer == PlayerType.USER && secondPlayer == PlayerType.USER) {
             //user user
@@ -173,7 +175,7 @@ public class Main {
                 drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
                 firstPlayerMoved = false;
             }
-        }
+        } */
     }
 
     private static char[] enterBoardState(Scanner scanner) throws IOException {
@@ -304,7 +306,7 @@ public class Main {
     }
 
     private static char[] addBotMove(Bot bot, char[] chars, boolean[] board, char character) {
-        int index = bot.move(board);
+        int index = bot.move(board, chars);
         chars[index] = character;
         board[index] = true;
         return chars;
@@ -356,6 +358,4 @@ public class Main {
                 (chars[0] == chars[4] && chars[4] == chars[8] && chars[0] == player) || // diagonal
                 (chars[2] == chars[4] && chars[4] == chars[6] && chars[2] == player);   // counter diagonal;
     }
-
-
 }

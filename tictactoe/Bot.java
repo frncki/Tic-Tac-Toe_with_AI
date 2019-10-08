@@ -17,10 +17,10 @@ public class Bot {
         difficulty = diff;
     }
 
-    public int move(boolean[] board) {
+    public int move(boolean[] board, char[] chars) {
         switch(difficulty) {
             case BOT_EASY: return easy(board);
-            case BOT_MEDIUM: return medium(board);
+            case BOT_MEDIUM: return medium(board, chars);
             case BOT_HARD: return hard(board);
         }
         return easy(board); //TODO refactor this!
@@ -47,7 +47,7 @@ public class Bot {
         return index;
     }
 
-    private int medium(boolean[] board) {
+    private int medium(boolean[] board,  char[] chars) {
         System.out.println("Making move level \"medium\"");
         index = 1;
         return index;
