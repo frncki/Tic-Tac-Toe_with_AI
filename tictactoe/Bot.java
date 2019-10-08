@@ -4,18 +4,34 @@ import java.util.*;
 
 public class Bot {
 
-    Random random;
-    int to, from, index;
-    int[] move;
+    private Random random;
+    private int to, from, index;
+    private int[] move;
+    Difficulty difficulty;
 
-    Bot() {
+    Bot(Difficulty diff) {
         random = new Random();
         to = 3 + 1; // +1 because the upper limit must be incremented for it to be inclusive
         from = 1;
         move = new int[2];
+        difficulty = diff;
     }
 
-    public int easy(boolean[] board) {
+    public int move(boolean[] board) {
+        switch(difficulty) {
+            case EASY:
+                return easy(board);
+
+            case MEDIUM:
+                return medium(board);
+
+            case HARD:
+                return hard(board);
+        }
+        return easy(board);
+    }
+
+    private int easy(boolean[] board) {
         System.out.println("Making move level \"easy\"");
 
         boolean valid;
@@ -36,14 +52,14 @@ public class Bot {
         return index;
     }
 
-    public int medium(boolean[] board) {
-        System.out.println("Work in progress: medium");
+    private int medium(boolean[] board) {
+        System.out.println("Making move level \"medium\"");
         index = 1;
         return index;
     }
 
-    public int hard(boolean[] board) {
-        System.out.println("Work in progress: hard");
+    private int hard(boolean[] board) {
+        System.out.println("Making move level \"hard\"");
         index = 2;
         return index;
     }

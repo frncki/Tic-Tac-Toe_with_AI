@@ -1,25 +1,132 @@
 package tictactoe;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        char[] inCh = enterBoardState(reader); //inCh = inputCharacters
+        char[] inCh = initGame("         "); //inCh = inputCharacters
         boolean[] board = initializeBoardArray(inCh);
-        Bot bot = new Bot();
-        //int[] botMove = new int[2];
+        boolean game = true;
+
+        Bot bot = new Bot(Difficulty.EASY);
+        char playerCharacter = 'X', botCharacter = 'O';
+        boolean playerMoved = false;
 
         drawBoard(inCh);
 
-        drawBoard(addBotMove(reader, bot, inCh, board, 'X'));
+        while (game) {
+            switch (checkBoard(inCh)) {
+                case "Game not finished":
+                    if(!playerMoved) {
+                        drawBoard(addPlayerMove(reader, inCh, board, playerCharacter));
+                        playerMoved = true;
+                    } else{
+                        drawBoard(addBotMove(bot, inCh, board, botCharacter));
+                        playerMoved = false;
+                    }
+                    break;
 
+                case "O wins":
+                    System.out.println(checkBoard(inCh));
+                    game = false;
+                    break;
+
+                case "X wins":
+                    System.out.println(checkBoard(inCh));
+                    game = false;
+                    break;
+
+                case "Draw":
+                    System.out.println(checkBoard(inCh));
+                    game = false;
+                    break;
+
+                case "Impossible":
+                    System.out.println(checkBoard(inCh));
+                    game = false;
+                    break;
+
+            }
+
+        }
     }
 
+    private static char[] initGame(String state) {
+        char[] chars = new char[9];
+        state.getChars(0, 9, chars, 0);
+        return rearrangeInput(chars);
+    }
+
+    private static char[] enterBoardState(BufferedReader reader) throws IOException {
+
+        char[] chars = new char[9];
+
+        System.out.print("Enter cells: ");
+        // Reading data using readLine
+        String inputCells = reader.readLine().replace("\"", "");
+
+        System.out.println(inputCells);
+
+        if (inputCells.length() != 9) {
+            System.err.println("Error! Wrong input length.");
+            System.exit(0);
+        } else {
+
+            try {
+                inputCells.getChars(0, 9, chars, 0);
+                int checker = 0;
+                for (char ch : chars) {
+                    if (ch == 'X' || ch == 'O' || ch == ' ') {
+                        checker++;
+                    } else {
+                        System.out.println("Error! Wrong characters.");
+                        System.exit(1);
+                    }
+                    if (checker == 9) System.out.println("Valid input!");
+                }
+            } catch (Exception ex) {
+                System.err.println(ex);
+            }
+        }
+
+        return rearrangeInput(chars);
+    }
+
+    private static char[] rearrangeInput(char[] chars) {
+        char[] temp = new char[3];
+
+        for (int i = 0; i < 3; i++) { // rearranges the characters so it matches input method
+            temp[i] = chars[i];
+            chars[i] = chars[i + 6];
+            chars[i + 6] = temp[i];
+        }
+
+        return chars;
+    }
+
+    private static boolean[] initializeBoardArray(char[] chars) {
+        boolean[] board = new boolean[9];
+
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == 'X' || chars[i] == 'O') {
+                board[i] = true;
+            } else {
+                board[i] = false;
+            }
+        }
+        return board;
+    }
+
+    private static void drawBoard(char[] chars) {
+        System.out.println("---------\n" +
+                "| " + chars[6] + " " + chars[7] + " " + chars[8] + " " + "|\n" +
+                "| " + chars[3] + " " + chars[4] + " " + chars[5] + " " + "|\n" +
+                "| " + chars[0] + " " + chars[1] + " " + chars[2] + " " + "|\n" +
+                "---------");
+    }
 
     private static char[] addPlayerMove(BufferedReader reader, char[] chars, boolean[] board, char player) throws IOException { //index formula = x + y * width
         boolean valid = false;
@@ -80,19 +187,11 @@ public class Main {
         return chars;
     }
 
-    private static char[] addBotMove(BufferedReader reader, Bot bot, char[] chars, boolean[] board, char character) throws IOException {
-
-        chars[bot.easy(board)] = character;
-
+    private static char[] addBotMove(Bot bot, char[] chars, boolean[] board, char character) {
+        int index = bot.move(board);
+        chars[index] = character;
+        board[index] = true;
         return chars;
-    }
-
-    private static void drawBoard(char[] chars) {
-        System.out.println("---------\n" +
-                "| " + chars[6] + " " + chars[7] + " " + chars[8] + " " + "|\n" +
-                "| " + chars[3] + " " + chars[4] + " " + chars[5] + " " + "|\n" +
-                "| " + chars[0] + " " + chars[1] + " " + chars[2] + " " + "|\n" +
-                "---------");
     }
 
     private static String checkBoard(char[] chars) {
@@ -106,17 +205,23 @@ public class Main {
 
         int oxDiff = Math.abs(oNum - xNum);
 
-        if (oxDiff > 1) return "Impossible";
+        if (oxDiff > 1) {
+            return "Impossible";
+        }
 
         for (int i = 0; i < 3; i++) {
             if (checkPlayer(i, chars, 'O')) { //checks O player
                 for (int j = 0; j < 3; j++) {
-                    if (checkPlayer(j, chars, 'X')) return "Impossible"; //checks if there is any X win at the same time
+                    if (checkPlayer(j, chars, 'X')) {
+                        return "Impossible"; //checks if there is any X win at the same time
+                    }
                 }
                 return "O wins";
             } else if (checkPlayer(i, chars, 'X')) { //checks X player
                 for (int j = 0; j < 3; j++) {
-                    if (checkPlayer(j, chars, 'O')) return "Impossible"; //checks if there is any O win at the same time
+                    if (checkPlayer(j, chars, 'O')) {
+                        return "Impossible"; //checks if there is any O win at the same time
+                    }
                 }
                 return "X wins";
             }
@@ -136,59 +241,5 @@ public class Main {
                 (chars[2] == chars[4] && chars[4] == chars[6] && chars[2] == player);   // counter diagonal;
     }
 
-    private static char[] enterBoardState(BufferedReader reader) throws IOException {
 
-        char[] chars = new char[9];
-
-        System.out.print("Enter cells: ");
-        // Reading data using readLine
-        String inputCells = reader.readLine().replace("\"", "");
-
-        System.out.println(inputCells);
-
-        if (inputCells.length() != 9) {
-            System.err.println("Error! Wrong input length.");
-            System.exit(0);
-        } else {
-
-            try {
-                inputCells.getChars(0, 9, chars, 0);
-                int checker = 0;
-                for (char ch : chars) {
-                    if (ch == 'X' || ch == 'O' || ch == ' ') {
-                        checker++;
-                    } else {
-                        System.out.println("Error! Wrong characters.");
-                        System.exit(1);
-                    }
-                    if (checker == 9) System.out.println("Valid input!");
-                }
-            } catch (Exception ex) {
-                System.err.println(ex);
-            }
-        }
-
-        char[] temp = new char[3];
-
-        for (int i = 0; i < 3; i++) { // rearranges the characters so it matches input method
-            temp[i] = chars[i];
-            chars[i] = chars[i + 6];
-            chars[i + 6] = temp[i];
-        }
-
-        return chars;
-    }
-
-    private static boolean[] initializeBoardArray(char[] chars) {
-        boolean[] board = new boolean[9];
-
-        for (int i = 0; i < chars.length; i++) {
-            if (chars[i] == 'X' || chars[i] == 'O') {
-                board[i] = true;
-            } else {
-                board[i] = false;
-            }
-        }
-        return board;
-    }
 }
