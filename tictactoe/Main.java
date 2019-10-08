@@ -1,31 +1,81 @@
 package tictactoe;
 
+import java.util.*;
 import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        Scanner scanner = new Scanner(System.in);
 
         char[] inCh = initGame("         "); //inCh = inputCharacters
         boolean[] board = initializeBoardArray(inCh);
+
+        //Bot bot = new Bot(PlayerType.BOT_EASY);
+        char firstPlayerCharacter = 'X';
+
+        //theGame(scanner, bot, inCh, board);
+
+        boolean menu = true;
+
+        while(menu) {
+            System.out.print("Input command: ");
+            String command = scanner.nextLine();
+
+            switch(command) {
+                case "start user easy":
+                case "start user medium":
+                case "start user hard":
+                case "start user user":
+                case "start easy easy":
+                case "start easy medium":
+                case "start easy hard":
+                case "start easy user":
+                case "start medium easy":
+                case "start medium medium":
+                case "start medium hard":
+                case "start medium user":
+                case "start hard easy":
+                case "start hard medium":
+                case "start hard hard":
+                case "start hard user":
+                    String[] params = command.split(" ");
+                    theGame(scanner, inCh, board, PlayerType.get(params[1]), PlayerType.get(params[2]));
+                    break;
+
+                case "exit":
+                    menu = false;
+                    break;
+
+                default:
+                    System.out.println("Bad parameters!");
+            }
+        }
+    }
+
+    private static char[] initGame(String state) {
+        char[] chars = new char[9];
+        state.getChars(0, 9, chars, 0);
+        return rearrangeInput(chars);
+    }
+
+    private static void theGame(Scanner scanner, char[] inCh, boolean[] board, PlayerType firstPlayer, PlayerType secondPlayer) throws IOException { // probably should overload this function but fk it
         boolean game = true;
 
-        Bot bot = new Bot(Difficulty.EASY);
-        char playerCharacter = 'X', botCharacter = 'O';
-        boolean playerMoved = false;
+        drawBoard(inCh); //drawing board with initial state
 
-        drawBoard(inCh);
+        boolean firstPlayerMoved = false;
+        char firstPlayerCharacter = 'X', secondPlayerCharacter = 'O';
 
-        while (game) {
+        while (game) { // game loop
             switch (checkBoard(inCh)) {
                 case "Game not finished":
-                    if(!playerMoved) {
-                        drawBoard(addPlayerMove(reader, inCh, board, playerCharacter));
-                        playerMoved = true;
+                    if(!firstPlayerMoved) {
+                        drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
+                        firstPlayerMoved = true;
                     } else{
-                        drawBoard(addBotMove(bot, inCh, board, botCharacter));
-                        playerMoved = false;
+                        drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
+                        firstPlayerMoved = false;
                     }
                     break;
 
@@ -54,19 +104,78 @@ public class Main {
         }
     }
 
-    private static char[] initGame(String state) {
-        char[] chars = new char[9];
-        state.getChars(0, 9, chars, 0);
-        return rearrangeInput(chars);
+    private static void gameMove(Scanner scanner, char[] inCh, boolean[] board, PlayerType firstPlayer, PlayerType secondPlayer) throws IOException {
+        boolean firstPlayerMoved = false;
+        char firstPlayerCharacter = 'X', secondPlayerCharacter = 'O';
+
+        switch(firstPlayer) {
+            case USER:
+                switch(secondPlayer) {
+                    case USER:
+                        if(!firstPlayerMoved) {
+                            drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
+                            firstPlayerMoved = true;
+                        } else{
+                            drawBoard(addPlayerMove(scanner, inCh, board, secondPlayerCharacter));
+                            firstPlayerMoved = false;
+                        }
+                        break;
+
+                    case BOT_EASY:
+                    case BOT_MEDIUM:
+                    case BOT_HARD:
+                        if(!firstPlayerMoved) {
+                            drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
+                            firstPlayerMoved = true;
+                        } else{
+                            drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
+                            firstPlayerMoved = false;
+                        }
+                        break;
+                }
+                break;
+
+            case BOT_EASY:
+            case BOT_MEDIUM:
+            case BOT_HARD:
+                switch(secondPlayer) {
+                    case USER:
+                        if(!firstPlayerMoved) {
+                            drawBoard(addBotMove(new Bot(firstPlayer), inCh, board, firstPlayerCharacter));
+                            firstPlayerMoved = true;
+                        } else{
+                            drawBoard(addPlayerMove(scanner, inCh, board, secondPlayerCharacter));
+                            firstPlayerMoved = false;
+                        }
+                        break;
+
+                    case BOT_EASY:
+                    case BOT_MEDIUM:
+                    case BOT_HARD:
+                        if(!firstPlayerMoved) {
+                            drawBoard(addBotMove(new Bot(firstPlayer), inCh, board, firstPlayerCharacter));
+                            firstPlayerMoved = true;
+                        } else{
+                            drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
+                            firstPlayerMoved = false;
+                        }
+                        break;
+                }
+                break;
+
+        }
+
+
+
     }
 
-    private static char[] enterBoardState(BufferedReader reader) throws IOException {
+    private static char[] enterBoardState(Scanner scanner) throws IOException {
 
         char[] chars = new char[9];
 
         System.out.print("Enter cells: ");
         // Reading data using readLine
-        String inputCells = reader.readLine().replace("\"", "");
+        String inputCells = scanner.nextLine().replace("\"", "");
 
         System.out.println(inputCells);
 
@@ -128,14 +237,14 @@ public class Main {
                 "---------");
     }
 
-    private static char[] addPlayerMove(BufferedReader reader, char[] chars, boolean[] board, char player) throws IOException { //index formula = x + y * width
+    private static char[] addPlayerMove(Scanner scanner, char[] chars, boolean[] board, char player) throws IOException { //index formula = x + y * width
         boolean valid = false;
         int x, y;
 
         while (!valid) {
             System.out.print("Enter the coordinates: ");
             // Reading data using readLine
-            String inputCoords = reader.readLine();
+            String inputCoords = scanner.nextLine();
             char[] inCords = new char[3];
 
             if (inputCoords.length() != 3) {

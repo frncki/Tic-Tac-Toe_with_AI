@@ -7,9 +7,9 @@ public class Bot {
     private Random random;
     private int to, from, index;
     private int[] move;
-    Difficulty difficulty;
+    private final PlayerType difficulty;
 
-    Bot(Difficulty diff) {
+    Bot(PlayerType diff) {
         random = new Random();
         to = 3 + 1; // +1 because the upper limit must be incremented for it to be inclusive
         from = 1;
@@ -19,16 +19,11 @@ public class Bot {
 
     public int move(boolean[] board) {
         switch(difficulty) {
-            case EASY:
-                return easy(board);
-
-            case MEDIUM:
-                return medium(board);
-
-            case HARD:
-                return hard(board);
+            case BOT_EASY: return easy(board);
+            case BOT_MEDIUM: return medium(board);
+            case BOT_HARD: return hard(board);
         }
-        return easy(board);
+        return easy(board); //TODO refactor this!
     }
 
     private int easy(boolean[] board) {
