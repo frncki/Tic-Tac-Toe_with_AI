@@ -22,8 +22,8 @@ public class Bot {
             case BOT_EASY: return easy(board);
             case BOT_MEDIUM: return medium(board, chars);
             case BOT_HARD: return hard(board);
+            default: return -1;
         }
-        return easy(board); //TODO refactor this!
     }
 
     private int easy(boolean[] board) {
