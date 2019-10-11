@@ -83,12 +83,12 @@ public class Main {
                             drawBoard(addPlayerMove(scanner, inCh, board, firstPlayerCharacter));
                             firstPlayerMoved = true;
                         } else {
-                            drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
+                            drawBoard(addBotMove(new Bot(secondPlayer, secondPlayerCharacter), inCh, board));
                             firstPlayerMoved = false;
                         }
                     } else if (checkBotDifficulty(firstPlayer) && secondPlayer == PlayerType.USER) {  //bot user
                         if (!firstPlayerMoved) {
-                            drawBoard(addBotMove(new Bot(firstPlayer), inCh, board, firstPlayerCharacter));
+                            drawBoard(addBotMove(new Bot(firstPlayer, firstPlayerCharacter), inCh, board));
                             firstPlayerMoved = true;
                         } else {
                             drawBoard(addPlayerMove(scanner, inCh, board, secondPlayerCharacter));
@@ -96,14 +96,14 @@ public class Main {
                         }
                     } else if (checkBotDifficulty(firstPlayer) && checkBotDifficulty(secondPlayer)) { //bot bot
                         if (!firstPlayerMoved) {
-                            drawBoard(addBotMove(new Bot(firstPlayer), inCh, board, firstPlayerCharacter));
+                            drawBoard(addBotMove(new Bot(firstPlayer, firstPlayerCharacter), inCh, board));
                             firstPlayerMoved = true;
                         } else {
-                            drawBoard(addBotMove(new Bot(secondPlayer), inCh, board, secondPlayerCharacter));
+                            drawBoard(addBotMove(new Bot(secondPlayer, secondPlayerCharacter), inCh, board));
                             firstPlayerMoved = false;
                         }
                     }
-                    //gameMove(scanner, inCh, board, firstPlayer, secondPlayer, firstPlayerMoved);
+                    //gameMove(scanner, inCh, board, firstPlayer, secondPlayer, firstPlayerMoved); // this should work but it does not
                     break;
 
                 case "O wins":
@@ -305,9 +305,9 @@ public class Main {
         return chars;
     }
 
-    private static char[] addBotMove(Bot bot, char[] chars, boolean[] board, char character) {
+    private static char[] addBotMove(Bot bot, char[] chars, boolean[] board) {
         int index = bot.move(board, chars);
-        chars[index] = character;
+        chars[index] = bot.getBotChar();
         board[index] = true;
         return chars;
     }
@@ -352,10 +352,10 @@ public class Main {
         return "Draw";
     }
 
-    private static boolean checkPlayer(int i, char[] chars, char player) {
-        return (chars[i] == chars[i + 3] && chars[i + 3] == chars[i + 6] && chars[i] == player) || // vertical
-                (chars[i * 3] == chars[i * 3 + 1] && chars[i * 3 + 1] == chars[i * 3 + 2] && chars[i * 3] == player) || // horizontal
-                (chars[0] == chars[4] && chars[4] == chars[8] && chars[0] == player) || // diagonal
-                (chars[2] == chars[4] && chars[4] == chars[6] && chars[2] == player);   // counter diagonal;
+    private static boolean checkPlayer(int i, char[] chars, char playerCharacter) {
+        return (chars[i] == chars[i + 3] && chars[i + 3] == chars[i + 6] && chars[i] == playerCharacter) || // vertical
+                (chars[i * 3] == chars[i * 3 + 1] && chars[i * 3 + 1] == chars[i * 3 + 2] && chars[i * 3] == playerCharacter) || // horizontal
+                (chars[0] == chars[4] && chars[4] == chars[8] && chars[0] == playerCharacter) || // counter diagonal
+                (chars[2] == chars[4] && chars[4] == chars[6] && chars[2] == playerCharacter);   // diagonal
     }
 }
