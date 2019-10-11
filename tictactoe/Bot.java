@@ -61,8 +61,13 @@ public class Bot {
 
     private int medium(boolean[] board, char[] chars) {
         System.out.println("Making move level \"medium\"");
-        index = 1;
-        return index;
+
+        for (int i = 0; i < 3; i++) {
+            if (possibleWin(i, board, chars, botChar) >= 0) return possibleWin(i, board, chars, botChar);
+            else if (possibleWin(i, board, chars, userChar) >= 0) return possibleWin(i, board, chars, userChar);
+        }
+
+        return easy(board);
     }
 
     private int hard(boolean[] board) {
@@ -75,32 +80,39 @@ public class Bot {
         // checking template if (place Im checking if free and place next to it is same as place further, and those places are a certain character) return index of a free
         if (!board[i * 3] && chars[i * 3 + 1] == chars[i * 3 + 2] && chars[i * 3 + 1] == charToCheck) { // horizontal 1. | |X|X|
             return i * 3;
+
         } else if (!board[i * 3 + 1] && chars[i * 3] == chars[i * 3 + 2] && chars[i * 3] == charToCheck) { //horizontal 2. |X| |X|
             return i * 3 + 1;
+
         } else if (!board[i * 3 + 2] && chars[i * 3] == chars[i * 3 + 1] && chars[i * 3] == charToCheck) { //horizontal 3. |X|X| |
             return i * 3 + 2;
+
         } else if (!board[i + 6] && chars[i] == chars[i + 3] && chars[i] == charToCheck) { //vertical 4.  | |
             return i + 6;                                                                  //             |X|
-                                                                                           //             |X|
+            //                                                                                            |X|
 
         } else if (!board[i + 3] && chars[i] == chars[i + 6] && chars[i] == charToCheck) { //vertical 5.  |X|
             return i + 3;                                                                  //             | |
-                                                                                           //             |X|
-            
+            //                                                                                            |X|
+
         } else if (!board[i] && chars[i + 3] == chars[i + 6] && chars[i] == charToCheck) { //vertical 6.  |X|
             return i;                                                                      //             |X|
-                                                                                           //             | |
-        } else if () { //diagonal 7.
+            //                                                                                            | |
 
-        } else if () { //diagonal 8.
+        } else if (!board[6] && chars[2] == chars[4] && chars[2] == charToCheck) { //diagonal 7.
+            return 6;
 
-        } else if () { //diagonal 9.
+        } else if (!board[4] && ((chars[2] == chars[6] && chars[2] == charToCheck) || (chars[0] == chars[8] && chars[0] == charToCheck))) { //diagonal 8.   or  counter diagonal 11.
+            return 4;
 
-        } else if () { //counter diagonal 10.
+        } else if (!board[2] && chars[4] == chars[6] && chars[4] == charToCheck) { //diagonal 9.
+            return 2;
 
-        } else if () { //counter diagonal 11.
+        } else if (!board[8] && chars[0] == chars[4] && chars[0] == charToCheck) { //counter diagonal 10.
+            return 8;
 
-        } else if () { //counter diagonal 12.
+        } else if (!board[0] && chars[4] == chars[8] && chars[4] == charToCheck) { //counter diagonal 12.
+            return 0;
 
         } else return -1;
     }
