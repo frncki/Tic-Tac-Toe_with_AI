@@ -1,24 +1,18 @@
-package tictactoe;
+package src.tictactoe;
 
 import java.util.*;
 import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-
-        Scanner scanner = new Scanner(System.in);
-
-        char[] inCh = initGame("         "); //inCh = inputCharacters
-        boolean[] board = initializeBoardArray(inCh);
-
-        //Bot bot = new Bot(PlayerType.BOT_EASY);
-        char firstPlayerCharacter = 'X';
-
-        //theGame(scanner, bot, inCh, board);
-
         boolean menu = true;
 
         while (menu) {
+            Scanner scanner = new Scanner(System.in);
+
+            char[] inCh = initGame("         "); //inCh = inputCharacters
+            boolean[] board = initializeBoardArray(inCh);
+
             System.out.print("Input command: ");
             String command = scanner.nextLine();
 

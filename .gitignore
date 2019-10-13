@@ -1,0 +1,10 @@
+
+.DS_Store
+
+*.xml
+
+out/production/tictactoe/
+
+tictactoe/out
+
+tictactoe/tictactoe.iml

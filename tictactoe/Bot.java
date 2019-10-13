@@ -1,12 +1,11 @@
-package tictactoe;
+package src.tictactoe;
 
 import java.util.*;
 
 public class Bot {
 
     private Random random;
-    private int to, from, index;
-    private int[] move;
+    private int x, y, to, from, index;
     private final PlayerType difficulty;
     private char botChar, userChar;
 
@@ -14,7 +13,6 @@ public class Bot {
         random = new Random();
         to = 3 + 1; // +1 because the upper limit must be incremented for it to be inclusive
         from = 1;
-        move = new int[2];
         difficulty = diff;
         botChar = playingCharacter;
         if (botChar == 'O') userChar = 'X';
@@ -44,16 +42,12 @@ public class Bot {
         boolean valid;
 
         do {
-            move[0] = random.nextInt(to - from) + from;
-            move[1] = random.nextInt(to - from) + from;
+            x = random.nextInt(to - from) + from;
+            y = random.nextInt(to - from) + from;
 
-            index = move[0] + move[1] * 3 - 4;
+            index = x + y * 3 - 4;
 
-            if (!board[index]) {
-                valid = true;
-            } else {
-                valid = false;
-            }
+            valid = !board[index];
         } while (!valid);
 
         return index;
