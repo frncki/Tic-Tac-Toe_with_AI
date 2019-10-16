@@ -1,4 +1,4 @@
-package src.tictactoe;
+package tictactoe;
 
 public enum PlayerType {
     USER, BOT_EASY, BOT_MEDIUM, BOT_HARD;

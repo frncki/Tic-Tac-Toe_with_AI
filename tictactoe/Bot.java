@@ -1,4 +1,4 @@
-package src.tictactoe;
+package tictactoe;
 
 import java.util.*;
 
@@ -23,14 +23,14 @@ public class Bot {
         return botChar;
     }
 
-    int move(boolean[] board, char[] chars) {
+    int move(char[] chars, boolean[] board) {
         switch (difficulty) {
             case BOT_EASY:
                 return easy(board);
             case BOT_MEDIUM:
                 return medium(board, chars);
             case BOT_HARD:
-                return hard(board);
+                return hard(board, chars);
             default:
                 return -1;
         }
@@ -64,7 +64,7 @@ public class Bot {
         return easy(board);
     }
 
-    private int hard(boolean[] board) {
+    private int hard(boolean[] board, char[] chars) {
         System.out.println("Making move level \"hard\"");
         index = 2;
         return index;
