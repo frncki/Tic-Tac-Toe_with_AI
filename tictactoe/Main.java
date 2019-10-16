@@ -48,7 +48,6 @@ public class Main {
         }
     }
 
-
     private static char[] enterBoardState(Scanner scanner) {
 
         char[] chars = new char[9];

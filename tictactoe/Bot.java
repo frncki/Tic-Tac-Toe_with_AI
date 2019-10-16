@@ -5,6 +5,7 @@ import java.util.*;
 public class Bot {
 
     private Random random;
+    private Minimax minimax;
     private int x, y, to, from, index;
     private final PlayerType difficulty;
     private char botChar, userChar;
@@ -30,7 +31,7 @@ public class Bot {
             case BOT_MEDIUM:
                 return medium(board, chars);
             case BOT_HARD:
-                return hard(board, chars);
+                return hard(chars);
             default:
                 return -1;
         }
@@ -64,10 +65,10 @@ public class Bot {
         return easy(board);
     }
 
-    private int hard(boolean[] board, char[] chars) {
+    private int hard(char[] chars) {
         System.out.println("Making move level \"hard\"");
-        index = 2;
-        return index;
+        minimax = new Minimax(chars, botChar);
+        return minimax.evaluate(botChar);
     }
 
     private int possibleWin(int i, boolean[] board, char[] chars, char charToCheck) {

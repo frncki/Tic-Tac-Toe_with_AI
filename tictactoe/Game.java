@@ -141,22 +141,16 @@ public class Game {
             return "Impossible";
         }
 
-        for (int i = 0; i < 3; i++) {
-            if (checkPlayer(i, chars, 'O')) { //checks O player
-                for (int j = 0; j < 3; j++) {
-                    if (checkPlayer(j, chars, 'X')) {
-                        return "Impossible"; //checks if there is any X win at the same time
-                    }
-                }
-                return "O wins";
-            } else if (checkPlayer(i, chars, 'X')) { //checks X player
-                for (int j = 0; j < 3; j++) {
-                    if (checkPlayer(j, chars, 'O')) {
-                        return "Impossible"; //checks if there is any O win at the same time
-                    }
-                }
-                return "X wins";
+        if (checkPlayer(chars, 'O')) { //checks O player
+            if (checkPlayer(chars, 'X')) {
+                return "Impossible"; //checks if there is any X win at the same time
             }
+            return "O wins";
+        } else if (checkPlayer(chars, 'X')) { //checks X player
+            if (checkPlayer(chars, 'O')) {
+                return "Impossible"; //checks if there is any O win at the same time
+            }
+            return "X wins";
         }
 
         for (char ch : chars) {
@@ -185,11 +179,15 @@ public class Game {
         return false;
     }
 
-    private boolean checkPlayer(int i, char[] chars, char playerCharacter) {
-        return (chars[i] == chars[i + 3] && chars[i + 3] == chars[i + 6] && chars[i] == playerCharacter) || // vertical
-                (chars[i * 3] == chars[i * 3 + 1] && chars[i * 3 + 1] == chars[i * 3 + 2] && chars[i * 3] == playerCharacter) || // horizontal
-                (chars[0] == chars[4] && chars[4] == chars[8] && chars[0] == playerCharacter) || // counter diagonal
-                (chars[2] == chars[4] && chars[4] == chars[6] && chars[2] == playerCharacter);   // diagonal
+    static boolean checkPlayer(char[] chars, char playerCharacter) {
+        boolean win = false;
+        for (int i = 0; i < 3; i++) {
+            win = (chars[i] == chars[i + 3] && chars[i + 3] == chars[i + 6] && chars[i] == playerCharacter) || // vertical
+                    (chars[i * 3] == chars[i * 3 + 1] && chars[i * 3 + 1] == chars[i * 3 + 2] && chars[i * 3] == playerCharacter) || // horizontal
+                    (chars[0] == chars[4] && chars[4] == chars[8] && chars[0] == playerCharacter) || // counter diagonal
+                    (chars[2] == chars[4] && chars[4] == chars[6] && chars[2] == playerCharacter);   // diagonal
+        }
+        return win;
     }
 
 }
