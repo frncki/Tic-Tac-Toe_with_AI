@@ -55,11 +55,15 @@ public class Bot {
     }
 
     private int medium(boolean[] board, char[] chars) {
-        System.out.println("Making move level \"medium\"");
 
         for (int i = 0; i < 3; i++) {
-            if (possibleWin(i, board, chars, botChar) >= 0) return possibleWin(i, board, chars, botChar);
-            else if (possibleWin(i, board, chars, userChar) >= 0) return possibleWin(i, board, chars, userChar);
+            if (possibleWin(i, board, chars, botChar) >= 0) {
+                System.out.println("Making move level \"medium\"");
+                return possibleWin(i, board, chars, botChar);
+            } else if (possibleWin(i, board, chars, userChar) >= 0) {
+                System.out.println("Making move level \"medium\"");
+                return possibleWin(i, board, chars, userChar);
+            }
         }
 
         return easy(board);
@@ -67,8 +71,8 @@ public class Bot {
 
     private int hard(char[] chars) {
         System.out.println("Making move level \"hard\"");
-        minimax = new Minimax(chars, botChar);
-        return minimax.evaluate(botChar);
+        minimax = new Minimax();
+        return minimax.evaluate(chars, botChar);
     }
 
     private int possibleWin(int i, boolean[] board, char[] chars, char charToCheck) {
