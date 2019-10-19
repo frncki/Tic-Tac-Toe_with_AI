@@ -8,7 +8,7 @@ public class Minimax {
 
     private char botChar, userChar;
     private ArrayList<Integer> availSpots;
-    private Move[] moves;
+    //private Move[] moves;
     private static double maxDepth;
 
     private char[] adaptBoard(char[] chars) {
@@ -32,7 +32,7 @@ public class Minimax {
         botChar = player;
         if (botChar == 'O') userChar = 'X';
         else userChar = 'O';
-        moves = new Move[9];
+        //moves = new Move[9];
 
         newBoard = adaptBoard(newBoard);
         availSpots = checkAvailableSpots(newBoard);
@@ -46,20 +46,20 @@ public class Minimax {
         for (int i = 0; i < availSpots.size(); i++) {
 
             //create an object for each and store the index of that spot that was stored as a number in the object's index key
-            moves[i].index = newBoard[availSpots.get(i)];
+            //moves[i].index = newBoard[availSpots.get(i)];
 
             // set the empty spot to the current player
             newBoard[availSpots.get(i)] = player;
 
             //if collect the score resulted from calling minimax on the opponent of the current player
             if (player == botChar) {
-                moves[i].score = evaluate(newBoard, userChar);
+                //moves[i].score = evaluate(newBoard, userChar);
             } else {
-                moves[i].score = evaluate(newBoard, botChar);
+               //moves[i].score = evaluate(newBoard, botChar);
             }
 
             //reset the spot to empty
-            newBoard[availSpots.get(i)] = moves[i].index;
+            //newBoard[availSpots.get(i)] = moves[i].index;
         }
 
         int bestMove = 10000;
