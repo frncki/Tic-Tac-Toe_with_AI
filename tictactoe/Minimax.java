@@ -5,8 +5,11 @@ import java.util.*;
 public class Minimax {
 
     private static double maxDepth;
+    private static ArrayList<Move> moves;
 
     private Minimax() {}
+
+    static ArrayList<Move> getMoves() {return moves;}
 
     static void run (char[] board, char player, double maxDepth) {
         if (maxDepth < 1) {
@@ -17,20 +20,26 @@ public class Minimax {
         miniMax(board, player, 0);
     }
 
-     static int miniMax (char[] board, char player, int currentDepth) {
+     static Move miniMax (char[] board, char player, int currentDepth) {
         currentDepth++;
+        moves = new ArrayList<>(9);
         if (currentDepth == maxDepth || Game.isGameOver(board)) {
-            return score(board, player);
+            moves.add(new Move(0, score(board, player)));
+            return new Move(0, score(board, player));
         }
 
+        board = adaptBoard(board);
+
         if (Game.getTurn(board) == player) {
+            moves.add(getMax(board, player, currentDepth));
             return getMax(board, player, currentDepth);
         } else {
+            moves.add(getMin(board, player, currentDepth));
             return getMin(board, player, currentDepth);
         }
     }
 
-    private static int getMax (char[] board, char player, int currentDepth) {
+    private static Move getMax (char[] board, char player, int currentDepth) {
         double bestScore = Double.NEGATIVE_INFINITY;
         int indexOfBestMove = -1;
 
@@ -39,7 +48,7 @@ public class Minimax {
             char[] modifiedBoard = board;
             modifiedBoard[theMove] = player;
 
-            int score = miniMax(modifiedBoard, player, currentDepth);
+            int score = miniMax(modifiedBoard, player, currentDepth).score;
 
             if (score >= bestScore) {
                 bestScore = score;
@@ -48,20 +57,19 @@ public class Minimax {
 
         }
 
-        board[indexOfBestMove] = player;
-        return (int)bestScore;
+        return new Move(indexOfBestMove ,(int)bestScore);
+
     }
 
-    private static int getMin (char[] board, char player, int currentDepth) {
+    private static Move getMin (char[] board, char player, int currentDepth) {
         double bestScore = Double.POSITIVE_INFINITY;
         int indexOfBestMove = -1;
 
         for (Integer theMove : getAvailableSpots(board)) {
-
             char[] modifiedBoard = board;
             modifiedBoard[theMove] = player;
 
-            int score = miniMax(modifiedBoard, player, currentDepth);
+            int score = miniMax(modifiedBoard, player, currentDepth).score;
 
             if (score <= bestScore) {
                 bestScore = score;
@@ -70,8 +78,7 @@ public class Minimax {
 
         }
 
-        board[indexOfBestMove] = player;
-        return (int)bestScore;
+        return new Move(indexOfBestMove ,(int)bestScore);
     }
 
     private static int score (char[] board, char player) {
@@ -86,7 +93,7 @@ public class Minimax {
         }
     }
 
-    private char[] adaptBoard(char[] chars) {
+    private static char[] adaptBoard(char[] chars) {
         for (int i = 0; i < chars.length; i++) {
             if (chars[i] == ' ') chars[i] = Character.forDigit(i, 10);
         }
@@ -103,5 +110,4 @@ public class Minimax {
             availSpots[i] = availableSpots.get(i);
         return availSpots;
     }
-
 }

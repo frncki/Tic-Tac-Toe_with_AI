@@ -72,7 +72,7 @@ public class Bot {
     private int hard(char[] chars) {
         System.out.println("Making move level \"hard\"");
         Minimax.run(chars, botChar, 9);
-        return Minimax.miniMax(chars, botChar, 0);
+        return Minimax.getMoves().get(0).index;
     }
 
     private int possibleWin(int i, boolean[] board, char[] chars, char charToCheck) {
