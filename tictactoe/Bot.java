@@ -71,8 +71,8 @@ public class Bot {
 
     private int hard(char[] chars) {
         System.out.println("Making move level \"hard\"");
-        minimax = new Minimax();
-        return minimax.evaluate(chars, botChar);
+        Minimax.run(chars, botChar, 9);
+        return Minimax.miniMax(chars, botChar, 0);
     }
 
     private int possibleWin(int i, boolean[] board, char[] chars, char charToCheck) {

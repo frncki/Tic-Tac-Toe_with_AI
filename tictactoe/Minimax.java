@@ -1,15 +1,90 @@
 package tictactoe;
 
-import javax.print.DocFlavor;
-import java.util.ArrayList;
-import java.util.Vector;
+import java.util.*;
 
 public class Minimax {
 
-    private char botChar, userChar;
-    private ArrayList<Integer> availSpots;
-    //private Move[] moves;
     private static double maxDepth;
+
+    private Minimax() {}
+
+    static void run (char[] board, char player, double maxDepth) {
+        if (maxDepth < 1) {
+            throw new IllegalArgumentException("Maximum depth must be greater than 0.");
+        }
+
+        Minimax.maxDepth = maxDepth;
+        miniMax(board, player, 0);
+    }
+
+     static int miniMax (char[] board, char player, int currentDepth) {
+        currentDepth++;
+        if (currentDepth == maxDepth || Game.isGameOver(board)) {
+            return score(board, player);
+        }
+
+        if (Game.getTurn(board) == player) {
+            return getMax(board, player, currentDepth);
+        } else {
+            return getMin(board, player, currentDepth);
+        }
+    }
+
+    private static int getMax (char[] board, char player, int currentDepth) {
+        double bestScore = Double.NEGATIVE_INFINITY;
+        int indexOfBestMove = -1;
+
+        for (Integer theMove : getAvailableSpots(board)) {
+
+            char[] modifiedBoard = board;
+            modifiedBoard[theMove] = player;
+
+            int score = miniMax(modifiedBoard, player, currentDepth);
+
+            if (score >= bestScore) {
+                bestScore = score;
+                indexOfBestMove = theMove;
+            }
+
+        }
+
+        board[indexOfBestMove] = player;
+        return (int)bestScore;
+    }
+
+    private static int getMin (char[] board, char player, int currentDepth) {
+        double bestScore = Double.POSITIVE_INFINITY;
+        int indexOfBestMove = -1;
+
+        for (Integer theMove : getAvailableSpots(board)) {
+
+            char[] modifiedBoard = board;
+            modifiedBoard[theMove] = player;
+
+            int score = miniMax(modifiedBoard, player, currentDepth);
+
+            if (score <= bestScore) {
+                bestScore = score;
+                indexOfBestMove = theMove;
+            }
+
+        }
+
+        board[indexOfBestMove] = player;
+        return (int)bestScore;
+    }
+
+    private static int score (char[] board, char player) {
+        char opponent = (player == 'X') ? 'O' : 'X';
+
+        if (Game.isGameOver(board) && Game.checkPlayer(board, player)) {
+            return 10;
+        } else if (Game.isGameOver(board) && Game.checkPlayer(board, opponent)) {
+            return -10;
+        } else {
+            return 0;
+        }
+    }
 
     private char[] adaptBoard(char[] chars) {
         for (int i = 0; i < chars.length; i++) {
@@ -18,73 +93,15 @@ public class Minimax {
         return chars;
     }
 
-    private ArrayList<Integer> checkAvailableSpots(char[] chars) {
-        ArrayList<Integer> availableSpots = new ArrayList<>();
+    private static int[] getAvailableSpots(char[] chars) {
+        List<Integer> availableSpots = new ArrayList<>();
         for(Character spot : chars) {
             if (!spot.equals('X') && !spot.equals('O')) availableSpots.add(Character.getNumericValue(spot));
         }
-        return availableSpots;
-    }
-
-
-    int evaluate(char[] newBoard, char player) {
-
-        botChar = player;
-        if (botChar == 'O') userChar = 'X';
-        else userChar = 'O';
-        //moves = new Move[9];
-
-        newBoard = adaptBoard(newBoard);
-        availSpots = checkAvailableSpots(newBoard);
-
-        // checks for the terminal states such as win, lose, and tie and returning a value accordingly
-        if (Game.checkPlayer(newBoard, botChar)) return 1;
-        else if (Game.checkPlayer(newBoard, userChar)) return -1;
-        else if (availSpots.isEmpty()) return 0;
-
-        // loop through available spots
-        for (int i = 0; i < availSpots.size(); i++) {
-
-            //create an object for each and store the index of that spot that was stored as a number in the object's index key
-            //moves[i].index = newBoard[availSpots.get(i)];
-
-            // set the empty spot to the current player
-            newBoard[availSpots.get(i)] = player;
-
-            //if collect the score resulted from calling minimax on the opponent of the current player
-            if (player == botChar) {
-                //moves[i].score = evaluate(newBoard, userChar);
-            } else {
-               //moves[i].score = evaluate(newBoard, botChar);
-            }
-
-            //reset the spot to empty
-            //newBoard[availSpots.get(i)] = moves[i].index;
-        }
-
-        int bestMove = 10000;
-        int bestScore = 10000;
-
-        // if it is the computer's turn loop over the moves and choose the move with the highest score
-        if(player == botChar) {
-            bestScore = -10000;
-            for(int i = 0; i < moves.length; i++) {
-                if(moves[i].score > bestScore) {
-                    bestScore = moves[i].score;
-                    bestMove = i;
-                }
-            }
-        } else {
-            // else loop over the moves and choose the move with the lowest score
-            for(int i = 0; i < moves.length; i++){
-                if(moves[i].score < bestScore){
-                    bestScore = moves[i].score;
-                    bestMove = i;
-                }
-            }
-        }
-
-        return bestMove;
+        int[] availSpots = new int[availableSpots.size()];
+        for (int i =0; i < availableSpots.size(); i++)
+            availSpots[i] = availableSpots.get(i);
+        return availSpots;
     }
 
 }

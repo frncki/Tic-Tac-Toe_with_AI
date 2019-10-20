@@ -128,14 +128,7 @@ public class Game {
 
     private String checkBoard(char[] chars) {
 
-        int oNum = 0, xNum = 0;
-
-        for (char ch : chars) {
-            if (ch == 'O') oNum++;
-            if (ch == 'X') xNum++;
-        }
-
-        int oxDiff = Math.abs(oNum - xNum);
+        int oxDiff = Math.abs(getOXDiff(chars));
 
         if (oxDiff > 1) {
             return "Impossible";
@@ -190,4 +183,25 @@ public class Game {
         return win;
     }
 
+    private static int getOXDiff(char[] chars) {
+        int oNum = 0;
+        int xNum = 0;
+        for (char ch : chars) {
+            if (ch == 'O') oNum++;
+            if (ch == 'X') xNum++;
+        }
+        return oNum - xNum;
+    }
+
+    static char getTurn(char[] chars) {
+        int oxDiff = getOXDiff(chars);
+        return oxDiff > 0 ? 'O' : 'X';
+    }
+
+    static boolean isGameOver(char[] chars) {
+        int spaceNum = 0;
+        for(char ch : chars) if(ch == ' ') spaceNum++;
+        return checkPlayer(chars, 'O') || checkPlayer(chars, 'X') || spaceNum == 0;
+
+    }
 }
