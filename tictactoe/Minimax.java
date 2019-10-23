@@ -2,7 +2,7 @@ package tictactoe;
 
 import java.util.*;
 
-public class Minimax {
+class Minimax {
 
     private static double maxDepth;
     private static ArrayList<Move> moves;
@@ -17,25 +17,28 @@ public class Minimax {
         }
 
         Minimax.maxDepth = maxDepth;
+        board = adaptBoard(board);
+        moves = new ArrayList<>(9);
         miniMax(board, player, 0);
     }
 
-     static Move miniMax (char[] board, char player, int currentDepth) {
-        currentDepth++;
-        moves = new ArrayList<>(9);
-        if (currentDepth == maxDepth || Game.isGameOver(board)) {
+    private static Move miniMax (char[] board, char player, int currentDepth) {
+        if (currentDepth++ == maxDepth && Game.isGameOver(board)) {
+            System.out.println("end " + currentDepth);
             moves.add(new Move(0, score(board, player)));
             return new Move(0, score(board, player));
         }
-
-        board = adaptBoard(board);
-
+        System.out.println("availspots: " + getAvailableSpots(board).length);
+        System.out.println("moves: " + moves.size());
         if (Game.getTurn(board) == player) {
-            moves.add(getMax(board, player, currentDepth));
-            return getMax(board, player, currentDepth);
+            System.out.println("max " + currentDepth);
+            Move max = getMax(board, player, currentDepth);
+            moves.add(max);
+            return max;
         } else {
-            moves.add(getMin(board, player, currentDepth));
-            return getMin(board, player, currentDepth);
+            Move min = getMin(board, player, currentDepth);
+            moves.add(min);
+            return min;
         }
     }
 
@@ -64,7 +67,6 @@ public class Minimax {
     private static Move getMin (char[] board, char player, int currentDepth) {
         double bestScore = Double.POSITIVE_INFINITY;
         int indexOfBestMove = -1;
-
         for (Integer theMove : getAvailableSpots(board)) {
             char[] modifiedBoard = board;
             modifiedBoard[theMove] = player;

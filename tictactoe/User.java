@@ -2,7 +2,7 @@ package tictactoe;
 
 import java.util.*;
 
-public class User {
+class User {
 
     private Scanner scanner;
     private char userChar;

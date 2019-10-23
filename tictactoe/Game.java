@@ -1,11 +1,11 @@
 package tictactoe;
 
-public class Game {
+class Game {
 
-    boolean menu;
-    char[] inCh; //inCh = inputCharacters
-    boolean[] board;
-    PlayerType firstPlayer, secondPlayer;
+    private boolean menu;
+    private char[] inCh; //inCh = inputCharacters
+    private boolean[] board;
+    private PlayerType firstPlayer, secondPlayer;
 
     Game(PlayerType first, PlayerType second) {
         menu = true;
@@ -183,13 +183,17 @@ public class Game {
         return win;
     }
 
-    private static int getOXDiff(char[] chars) {
-        int oNum = 0;
-        int xNum = 0;
+    static int getCharNum(char[] chars, char player) {
+        int charNum = 0;
         for (char ch : chars) {
-            if (ch == 'O') oNum++;
-            if (ch == 'X') xNum++;
+            if (ch == player) charNum++;
         }
+        return charNum;
+    }
+
+    static int getOXDiff(char[] chars) {
+        int oNum = getCharNum(chars, 'O');
+        int xNum = getCharNum(chars, 'X');
         return oNum - xNum;
     }
 

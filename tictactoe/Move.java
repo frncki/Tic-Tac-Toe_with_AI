@@ -1,6 +1,6 @@
 package tictactoe;
 
-public class Move {
+class Move {
     int index;
     int score;
 

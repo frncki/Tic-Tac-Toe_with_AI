@@ -2,11 +2,10 @@ package tictactoe;
 
 import java.util.*;
 
-public class Bot {
+class Bot {
 
     private Random random;
-    private Minimax minimax;
-    private int x, y, to, from, index;
+    private int to, from;
     private final PlayerType difficulty;
     private char botChar, userChar;
 
@@ -27,24 +26,26 @@ public class Bot {
     int move(char[] chars, boolean[] board) {
         switch (difficulty) {
             case BOT_EASY:
+                System.out.println("Making move level \"easy\"");
                 return easy(board);
             case BOT_MEDIUM:
+                System.out.println("Making move level \"medium\"");
                 return medium(board, chars);
             case BOT_HARD:
-                return hard(chars);
+                System.out.println("Making move level \"hard\"");
+                return hard(board, chars);
             default:
                 return -1;
         }
     }
 
     private int easy(boolean[] board) {
-        System.out.println("Making move level \"easy\"");
 
         boolean valid;
-
+        int index;
         do {
-            x = random.nextInt(to - from) + from;
-            y = random.nextInt(to - from) + from;
+            int x = random.nextInt(to - from) + from;
+            int y = random.nextInt(to - from) + from;
 
             index = x + y * 3 - 4;
 
@@ -58,10 +59,8 @@ public class Bot {
 
         for (int i = 0; i < 3; i++) {
             if (possibleWin(i, board, chars, botChar) >= 0) {
-                System.out.println("Making move level \"medium\"");
                 return possibleWin(i, board, chars, botChar);
             } else if (possibleWin(i, board, chars, userChar) >= 0) {
-                System.out.println("Making move level \"medium\"");
                 return possibleWin(i, board, chars, userChar);
             }
         }
@@ -69,10 +68,19 @@ public class Bot {
         return easy(board);
     }
 
-    private int hard(char[] chars) {
-        System.out.println("Making move level \"hard\"");
+    private int hard(boolean[] board, char[] chars) {
+
+        if (isFirstMove(chars)) return easy(board);
+
         Minimax.run(chars, botChar, 9);
+        System.out.println(Minimax.getMoves().get(0).index);
         return Minimax.getMoves().get(0).index;
+    }
+
+    private boolean isFirstMove(char[] chars) {
+        int oNum = Game.getCharNum(chars, 'O');
+        int xNum = Game.getCharNum(chars, 'X');
+        return oNum == 0 && xNum == 0;
     }
 
     private int possibleWin(int i, boolean[] board, char[] chars, char charToCheck) {
